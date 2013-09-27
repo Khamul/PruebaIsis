@@ -11,7 +11,7 @@ import org.apache.isis.applib.annotation.ObjectType;
 import org.apache.isis.applib.annotation.RegEx;
 import org.apache.isis.applib.filter.Filter;
 import org.apache.isis.applib.util.TitleBuffer;
-import org.apache.isis.core.objectstore.jdo.applib.annotations.Auditable;
+
 
 import com.google.common.base.Objects;
 
@@ -22,8 +22,8 @@ import com.google.common.base.Objects;
 @javax.jdo.annotations.Version(strategy=VersionStrategy.VERSION_NUMBER, column="VERSION")
 
 @ObjectType("CATEGORIA")
-@Auditable
-@AutoComplete(repository=CategoriaServicio.class, action="categoriaComplete")
+
+@AutoComplete(repository=CategoriaServicio.class, action="autoComplete")
 
 public class Categoria {
 
@@ -38,7 +38,7 @@ public class Categoria {
     // {{ Identification on the UI
     public String title() {
 		final TitleBuffer buf = new TitleBuffer();
-        buf.append(getCategoria());
+        buf.append(getNombre());
         return buf.toString();
 	} 
     
@@ -57,16 +57,16 @@ public class Categoria {
 	}  
     //}}
 	
-	//{{ Categoria
+	//{{ Nombre de Categoria
 	private String categoria;
 	
 	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
 	@MemberOrder(sequence="1")
-	public String getCategoria() {
+	public String getNombre() {
 		return categoria;
 	}
 	
-	public void setCategoria(String categoria) {
+	public void setNombre(String categoria) {
 		this.categoria=categoria;
 	}	
 	//}}

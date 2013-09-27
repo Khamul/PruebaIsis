@@ -2,6 +2,7 @@ package categoria;
 
 import java.util.List;
 
+
 import org.apache.isis.applib.AbstractFactoryAndRepository;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -17,10 +18,10 @@ import categoria.Categoria.Caja;
 import categoria.Categoria.Traccion;
 
 
-@Named("Categorias")
+@Named("Categoria")
 public class CategoriaServicio extends AbstractFactoryAndRepository {
 	
-	/*@MemberOrder(sequence="1")
+	@MemberOrder(sequence="1")
 	public Categoria CargarCategoria(
 			@Named("Categoria")String categoria,
 			@Named("Cantidad de puertas")int cantPuert,
@@ -32,7 +33,7 @@ public class CategoriaServicio extends AbstractFactoryAndRepository {
 		final String ownedBy = currentUserName();
 		final boolean activo= true;
 		return laCategoria(categoria,cantPuert,cantPlaz,caja,traccion,precio,ownedBy,activo);
-	}*/
+	}
 	
 	@Hidden
 	public Categoria laCategoria(
@@ -46,7 +47,7 @@ public class CategoriaServicio extends AbstractFactoryAndRepository {
 		boolean activo)
 		{
 			final Categoria categoria= newTransientInstance(Categoria.class);
-			categoria.setCategoria(cat);
+			categoria.setNombre(cat);
 			categoria.setCantPuertas(cantPuert);
 			categoria.setCantPlazas(cantPlaz);
 			categoria.setCaja(caja);
@@ -78,6 +79,19 @@ public class CategoriaServicio extends AbstractFactoryAndRepository {
         });
     }
     // }}	
+    
+	// {{ 
+	@Hidden    
+	public List<Categoria> autoComplete(final String cat) {
+		return allMatches(Categoria.class, new Filter<Categoria>() {
+		@Override
+		public boolean accept(final Categoria t) {		
+		return  t.getNombre().contains(cat); 
+		}
+	  });				
+	}
+	// }}
+    
 		
 	// {{ helpers
 	protected boolean ownedByCurrentUser(final Categoria t) {

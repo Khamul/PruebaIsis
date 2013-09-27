@@ -1,26 +1,26 @@
 package autos;
 
 
-import java.awt.Container;
+
 import java.util.Date;
 
-import javax.jdo.annotations.ForeignKey;
+
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.AutoComplete;
-import org.apache.isis.applib.annotation.Bulk;
+
 import org.apache.isis.applib.annotation.DescribedAs;
-import org.apache.isis.applib.annotation.EqualByContent;
+
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.MustSatisfy;
+
 import org.apache.isis.applib.annotation.ObjectType;
 import org.apache.isis.applib.annotation.RegEx;
 import org.apache.isis.applib.filter.Filter;
 import org.apache.isis.applib.util.TitleBuffer;
-import org.apache.isis.core.objectstore.jdo.applib.annotations.Auditable;
+
 import org.apache.isis.applib.annotation.Named;
 
 import com.google.common.base.Objects;
@@ -37,7 +37,7 @@ import marca.MarcaServicio;
 @javax.jdo.annotations.Version(strategy=VersionStrategy.VERSION_NUMBER, column="VERSION")
 
 @ObjectType("AUTO")
-@Auditable
+
 @AutoComplete(repository=MarcaServicio.class, action="autoComplete")
 
 

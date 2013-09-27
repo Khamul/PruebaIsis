@@ -3,7 +3,7 @@ package objstore.jdo.auto;
 import autos.AutoServicio;
 import autos.Auto;
 
-import org.apache.isis.applib.annotation.Named;
+
 import org.apache.isis.applib.query.QueryDefault;
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package autos;
 
-import java.awt.Container;
+
 import java.util.Date;
 import java.util.List;
 
@@ -12,8 +12,7 @@ import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.filter.Filter;
-import org.apache.isis.applib.query.QueryDefault;
-import org.apache.isis.applib.util.TitleBuffer;
+
 
 
 import com.google.common.base.Objects;
@@ -50,11 +49,6 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 			     
 	}
 	// }}
-	
-
-	
-	
-	
 	
 	// {{
 	@Hidden // for use by fixtures
