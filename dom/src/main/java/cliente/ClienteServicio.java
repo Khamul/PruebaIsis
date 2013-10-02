@@ -11,14 +11,14 @@ import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.NotInServiceMenu;
+
 import org.apache.isis.applib.filter.Filter;
 
 
 import com.google.common.base.Objects;
 
 import cliente.Cliente.TipoId;
-import cliente.Cliente.TipoPago;
+
 
 
 @Named("Cliente")
@@ -29,33 +29,28 @@ public class ClienteServicio extends AbstractFactoryAndRepository {
 	public Cliente CargarCliente(@Named("Nombre") String nombre,
 			@Named("Apellido") String apellido,
 			@Named("Tipo de Id Tributaria") TipoId tipo,
-			@Named("Numero") int numeroId,
+			@Named("Numero") String numeroId,
 			@Named("Numero de Telefono") int numeroTel,
-			@Named("Correo Electrónico") String mail,
-			@Named("Tipo de Pago") TipoPago tipoPago,
-			@Named("Numero de Recibo") int numeroRecibo){
+			@Named("Correo Electrónico") String mail){
 		final String ownedBy = currentUserName();
 		final boolean activo = true;
-		return elCliente(nombre, apellido, tipo, numeroId, numeroTel, mail, tipoPago, numeroRecibo,
-				ownedBy, activo);
+		return elCliente(nombre, apellido, tipo, numeroId, numeroTel, mail, ownedBy, activo);
 	}	
 	@Hidden
 	public Cliente elCliente(
 			final String nombre, 
 			final String apellido, 
 			final TipoId tipo,
-			final int numeroId, 
+			final String numeroId, 
 			final int numeroTel, 
-			final String mail, 
-			final TipoPago tipoPago, 
-			final int numeroRecibo,
+			final String mail,
 			final String userName, 
 			final boolean activo) {		
 			final List<Cliente> mismoNumDoc = allMatches(Cliente.class,
 				new Filter<Cliente>() {
 					@Override
 					public boolean accept(final Cliente cliente) {
-						return Objects.equal(cliente.getNumeroId(), numeroId);
+						return Objects.equal(cliente.getNumeroIdent(), numeroId);
 					}
 				});
 			
@@ -67,11 +62,9 @@ public class ClienteServicio extends AbstractFactoryAndRepository {
 			cliente.setNombre(nombre);
 			cliente.setApellido(apellido);
 			cliente.setTipoId(tipo);
-			cliente.setNumeroId(numeroId);
+			cliente.setNumeroIdent(numeroId);
 			cliente.setNumeroTel(numeroTel);
 			cliente.setEmail(mail);
-			cliente.setTipoPago(tipoPago);
-			cliente.setNumeroRecibo(numeroRecibo);
 			cliente.setOwnedBy(userName);
 			cliente.setActivo(true);
 			
@@ -114,7 +107,7 @@ public class ClienteServicio extends AbstractFactoryAndRepository {
 		return allMatches(Cliente.class, new Filter<Cliente>() {
 		@Override
 		public boolean accept(final Cliente t) {		
-		return t.getApellido().contains(cliente); 
+		return t.getNumeroIdent().contains(cliente) ; 
 		}
 	  });				
 	}

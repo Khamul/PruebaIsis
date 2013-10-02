@@ -23,10 +23,12 @@ import org.apache.isis.applib.util.TitleBuffer;
 
 import org.apache.isis.applib.annotation.Named;
 
+import categoria.Categoria;
+
 import com.google.common.base.Objects;
 
 import marca.Marca;
-import marca.MarcaServicio;
+
 
 
 @javax.jdo.annotations.PersistenceCapable(identityType=IdentityType.DATASTORE)
@@ -38,7 +40,7 @@ import marca.MarcaServicio;
 
 @ObjectType("AUTO")
 
-@AutoComplete(repository=MarcaServicio.class, action="autoComplete")
+@AutoComplete(repository=AutoServicio.class, action="autoComplete")
 
 
 public class Auto {
@@ -126,6 +128,20 @@ public class Auto {
         this.ano = ano; 
     }   
     // }}  
+    
+	// {{ Categoria
+	@Persistent
+	private Categoria categoria;
+	@DescribedAs("La categoria del vehiculo.")
+	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
+	@MemberOrder(sequence="5")	
+	public Categoria getCategoria() {
+		return categoria;
+	}	
+	public void setCategoria(final Categoria categoria)	{		
+		this.categoria=categoria;
+	}	
+	// }}
     
     // {{ Color
     private String color;

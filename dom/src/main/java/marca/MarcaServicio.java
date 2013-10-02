@@ -57,7 +57,7 @@ public class MarcaServicio extends AbstractFactoryAndRepository {
 	// }}
 	
 	// {{ Listado de Autos filtrado por Marcas
-	@NotInServiceMenu
+	
 	public List<Auto> AutosPorMarca(final Marca lista) {
 		return allMatches(Auto.class, new Filter<Auto>() {
 		@Override

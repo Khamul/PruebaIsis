@@ -21,6 +21,8 @@ import cliente.Cliente;
 import com.google.common.base.Objects;
 
 import alquiler.Alquiler;
+import alquiler.Alquiler.TipoPago;
+import autos.Auto;
 
 
 @Named("Alquiler")
@@ -105,27 +107,36 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 	// {{ 
 	// Carga de Alquiler
 	public Alquiler CargarAlquiler(
-			@Named("Categoria") Categoria categoria,			
-			@Named("Numero Cuil/Cuit") Cliente id) {
+			@Named("Categoria") Categoria categoria,	
+			@Named("Auto") Auto auto, 
+			@Named("Numero Cuil/Cuit") Cliente cliente,
+			@Named("Tipo de Pago") TipoPago tipoPago,
+			@Named("Numero de Recibo") int numeroRecibo) {
 		final boolean activo = true;
 		final String ownedBy = currentUserName();
-		return elAlq(categoria, id ,activo, ownedBy);
+		return elAlq(categoria, auto, cliente, tipoPago, numeroRecibo ,activo, ownedBy);
 
 	}
 	// }}
 	// {{
 	@Hidden
 	// for use by fixtures
-	public Alquiler elAlq(final Categoria categoria, 
-			final Cliente id,			
+	public Alquiler elAlq(final Categoria categoria,
+			final Auto auto,
+			final Cliente cliente,			
+			final TipoPago tipoPago,
+			final int numRecibo, 
 			final boolean activo,
 			final String userName) {
 		final Alquiler alquiler = newTransientInstance(Alquiler.class);
 		alquiler.setCategoria(categoria);
-		alquiler.setClienteId(id);
+		alquiler.setAuto(auto);
+		alquiler.setClienteId(cliente);
+		alquiler.setTipoPago(tipoPago);
+		alquiler.setNumeroRecibo(numRecibo);
 		alquiler.setOwnedBy(userName);
 		alquiler.setActivo(true);
-		
+	
 		persistIfNotAlready(alquiler);
 		
 		return alquiler;
@@ -152,6 +163,8 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 		});
 	}
 	// }}	
+	
+	
 		
 	// {{ Helpers
 	protected boolean ownedByCurrentUser(final Alquiler t) {

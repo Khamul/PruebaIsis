@@ -1,10 +1,9 @@
 package alquiler;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Persistent;
+
 import javax.jdo.annotations.VersionStrategy;
 
 import org.apache.isis.applib.DomainObjectContainer;
@@ -18,23 +17,30 @@ import org.apache.isis.applib.annotation.RegEx;
 import org.apache.isis.applib.util.TitleBuffer;
 import org.apache.isis.applib.annotation.MemberGroups;
 
+import autos.Auto;
+
 import cliente.Cliente;
-import cliente.ClienteServicio;
+
+
 
 
 
 import categoria.Categoria;
-import categoria.CategoriaServicio;
+
 
 @javax.jdo.annotations.PersistenceCapable(identityType=IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(strategy=javax.jdo.annotations.IdGeneratorStrategy.IDENTITY)
 @javax.jdo.annotations.Version(strategy=VersionStrategy.VERSION_NUMBER, column="VERSION")
-@MemberGroups({"Cliente", "Categoria"})
-@AutoComplete(repository=CategoriaServicio.class, action="autoComplete")
+@MemberGroups({"Cliente", "Categoria","Auto","Medio de Pago"})
+@AutoComplete(repository=AlquilerServicio.class, action="autoComplete")
 
 
 @ObjectType("ALQUILER")
 public class Alquiler {
+	
+	public static enum TipoPago{
+		EFECTIVO, CHEQUE, TARJETA_CREDITO, TARJETA_DEBITO;
+	}
 	
 	@Named("Alquiler")
 	// {{ Identification on the UI	
@@ -56,8 +62,7 @@ public class Alquiler {
 	}	
 	// }}
 	
-	// {{ Categoria
-	@Persistent
+	// {{ Categoria	
 	private Categoria categoria;
 	@DescribedAs("La categoria del vehiculo.")
 	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
@@ -70,9 +75,20 @@ public class Alquiler {
 	}	
 	// }}
 	
-	// {{ Cliente
+	// {{ Auto	
+	private Auto auto;
+	@DescribedAs("El vehiculo.")
+	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
+	@MemberOrder(name="Auto",sequence="1")	
+	public Auto getAuto() {
+		return auto;
+	}	
+	public void setAuto(final Auto auto)	{		
+		this.auto=auto;
+	}	
+	// }}
 	
-	@Persistent	
+	// {{ Cliente		
 	private Cliente clienteId;
 	@DescribedAs("Numero de CUIL/CUIT")
 	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
@@ -84,6 +100,32 @@ public class Alquiler {
 		this.clienteId=clienteId;
 	}	
 	// }}
+	
+	// {{ Tipo de Pago
+	private TipoPago tipoPago;
+
+	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
+	@MemberOrder(name="Medio de Pago",sequence="1")	
+	public TipoPago getTipoPago() {
+		return tipoPago;
+	}
+	public void setTipoPago(TipoPago tipoPago) {
+		this.tipoPago = tipoPago;
+	}
+	// }}	
+	
+	// {{ Numero de Recibo
+	private int recibo;
+
+	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
+	@MemberOrder(name="Medio de Pago",sequence="2")
+	public int getNumeroRecibo() {
+		return recibo;
+	}
+	public void setNumeroRecibo(int recibo) {
+		this.recibo = recibo;
+	}
+	// }}	
 	
     // {{ Campo Activo
    	private boolean activo;

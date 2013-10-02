@@ -86,7 +86,7 @@ public class CategoriaServicio extends AbstractFactoryAndRepository {
 		return allMatches(Categoria.class, new Filter<Categoria>() {
 		@Override
 		public boolean accept(final Categoria t) {		
-		return  t.getNombre().contains(cat); 
+		return  t.getNombre().contains(cat) && t.getActivo(); 
 		}
 	  });				
 	}
