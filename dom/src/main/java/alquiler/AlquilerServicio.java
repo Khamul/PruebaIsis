@@ -29,82 +29,6 @@ import autos.Auto.Estado;
 
 @Named("Alquiler")
 public class AlquilerServicio extends AbstractFactoryAndRepository{
-	/*
-	// {{ 
-	// Carga de Alquiler
-	public Alquiler CargarAlquiler(
-			@Named("Categoria") Categoria categoria,			
-			@Named("Nombre") String nombre,
-			@Named("Apellido") String apellido,
-			@Named("Tipo de Id Tributaria") TipoId tipo,
-			@Named("Numero") int numeroId,
-			@Named("Numero de Telefono") int numeroTel,
-			@Named("Correo Electrónico") String mail,
-			@Named("Tipo de Pago") TipoPago tipoPago,
-			@Named("Numero de Recibo") int numeroRecibo) {
-		final boolean activo = true;
-		final String ownedBy = currentUserName();
-		return elAlq(categoria, numeroId, nombre, apellido, tipo, numeroId, numeroTel, mail, tipoPago, numeroRecibo,activo, ownedBy);
-
-	}
-	// }}
-	// {{
-	@Hidden
-	// for use by fixtures
-	public Alquiler elAlq(final Categoria categoria, 
-			final int numero,
-			final String nombre, 
-			final String apellido, 
-			final TipoId tipo,
-			final int numeroId, 
-			final int numeroTel, 
-			final String mail, 
-			final TipoPago tipoPago, 
-			final int numeroRecibo,			
-			final boolean activo,
-			final String userName) {
-		final Alquiler alquiler = newTransientInstance(Alquiler.class);
-		alquiler.setCategoria(categoria);
-		alquiler.setCliente(numeroId);
-		alquiler.setOwnedBy(userName);
-		alquiler.setActivo(true);
-		final List<Cliente> mismoNumDoc = allMatches(Cliente.class,
-				new Filter<Cliente>() {
-					@Override
-					public boolean accept(final Cliente cliente) {
-						return Objects.equal(cliente.getNumeroId(), numeroId);
-					}
-				});
-
-		Cliente cliente = newTransientInstance(Cliente.class);
-
-		if (mismoNumDoc.size() == 0) {
-
-			cliente.setNombre(nombre);
-			cliente.setApellido(apellido);
-			cliente.setTipoId(tipo);
-			cliente.setNumeroId(numeroId);
-			cliente.setNumeroTel(numeroTel);
-			cliente.setEmail(mail);
-			cliente.setTipoPago(tipoPago);
-			cliente.setNumeroRecibo(numeroRecibo);
-			cliente.setActivo(true);
-			cliente.setOwnedBy(userName);
-		
-			persistIfNotAlready(alquiler);
-			persistIfNotAlready(cliente);
-
-		} else {
-			cliente = null;
-			getContainer().warnUser("YA SE ENCUENTRA EL CLIENTE CARGADO");
-			
-		}
-		
-		
-		return alquiler;
-	}
-	// }}
-	*/
 		
 	// {{ 
 	// Carga de Alquiler
@@ -113,8 +37,8 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 			@Named("Numero Cuil/Cuit") Cliente cliente,
 			@Named("Tipo de Pago") TipoPago tipoPago,
 			@Named("Numero de Recibo") int numeroRecibo,
-			@Named("Fecha Alquiler")Date fechaAlq,
-			@Named("Fecha Devolucion")Date fechaDev) {
+			@Named("Fecha Alquiler") Date fechaAlq,
+			@Named("Fecha Devolucion") Date fechaDev) {
 		final boolean activo = true;
 		final String ownedBy = currentUserName();
 		return elAlq(auto, cliente, tipoPago, numeroRecibo, fechaAlq, fechaDev, activo, ownedBy);
@@ -136,15 +60,21 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 			final String userName) {
 		final Alquiler alquiler = newTransientInstance(Alquiler.class);
 		
+		float dias=calculoDias(fechaAlq, fechaDev);
+		float costo=auto.getCategoria().getPrecio();
+		float precio=dias*costo;
+				
 		alquiler.setAuto(auto);
 		alquiler.setClienteId(cliente);
 		alquiler.setTipoPago(tipoPago);
+		alquiler.setPrecioAlquiler(precio);
 		alquiler.setNumeroRecibo(numRecibo);
 		alquiler.setFechaAlquiler(fechaAlq);
 		alquiler.setFechaDevolucion(fechaDev);
 		alquiler.setOwnedBy(userName);
 		alquiler.setActivo(true);
 		auto.setEstado(Estado.ALQUILADO);
+		
 		persistIfNotAlready(alquiler);
 		
 		return alquiler;
@@ -172,7 +102,7 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 	public List<Alquiler> AlquileresActivos() {
 		List<Alquiler> items = doComplete();
 		if (items.isEmpty()) {
-			getContainer().informUser("No hay alquileres activos :-(");
+			getContainer().informUser("No hay alquileres activos ");
 		}
 		return items;
 	}
@@ -187,6 +117,34 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 	}
 	// }}	
 	
+	// {{
+	protected int calculoDias(final Date a1, final Date a2){
+		long inicio=a1.getTime();
+		long fin =a2.getTime();
+		long diferencia = fin-inicio;
+		long resultado = diferencia/(24*60*60*1000);
+		
+		return (int) resultado;
+	}
+	// }}
+	
+	// {{  
+	@MemberOrder(sequence = "3")   
+	public List<Alquiler> listadoAlquileres(final Date fecha1, final Date fecha2 ) {
+		return allMatches(Alquiler.class, new Filter<Alquiler>() {
+		@Override
+		public boolean accept(final Alquiler t) {		
+			if (fecha1.getTime()>=t.getFechaAlquiler().getTime() && fecha2.getTime()<=t.getFechaDevolucion().getTime()){
+				return t.getAuto().getActivo(); 
+			}
+			else{
+				getContainer().informUser("No hay alquileres entre dichas fechas");
+			return false;
+			}
+		}
+	  });				
+	}
+	// }}
 		
 	// {{ Helpers
 	protected boolean ownedByCurrentUser(final Alquiler t) {
@@ -195,17 +153,5 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 	protected String currentUserName() {
 	    return getContainer().getUser().getName();
 	}
-	// }}
-	
-	/*
-	 * 
-	 *  public List<Order> findRecentOrders(Customer customer, @Named("Number of Orders") 
-	 *  Integer numberOfOrders) { 
-	 *  List<Order> orders = customer.getOrders(); 
-	 *  Collections.sort(orders, new Comparator<Order>() *  {
-	 *   public int compare(Order o1, Order o2) {
-	 *   long time1 = o1.getOrderDate().getTime(); 
-	 *   long time2 = o2.getOrderDate().getTime(); 
-	 *   return (int) (time2 - time1); }
-	 * */	
+	// }}	
 }

@@ -114,16 +114,16 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 	
 	// {{ complete (action)
     @ActionSemantics(Of.SAFE)
-	@MemberOrder(sequence = "2") // Listado de Autos
+	@MemberOrder(sequence = "2") // Listado de Autos Activos
     public List<Auto> AutosActivos() {
-        List<Auto> items = doComplete();
+        List<Auto> items = listadoActivos();
         if(items.isEmpty()) {
-            getContainer().informUser("No hay autos activos :-(");
+            getContainer().informUser("No hay autos activos ");
         }
         return items;
     }
 
-    protected List<Auto> doComplete() {
+    protected List<Auto> listadoActivos() {
         return allMatches(Auto.class, new Filter<Auto>() {
             @Override
             public boolean accept(final Auto t) {
@@ -131,6 +131,25 @@ public class AutoServicio extends AbstractFactoryAndRepository {
             }
         });
     }
+    // }}
+    
+    // {{
+	@MemberOrder(sequence = "3") // Listado de Autos Libres
+    public List<Auto> AutosLibres() {
+        List<Auto> items = listadoLibres();
+        if(items.isEmpty()) {
+            getContainer().informUser("No hay autos Libres ");
+        }
+        return items;
+    }
+    protected List<Auto> listadoLibres() {
+        return allMatches(Auto.class, new Filter<Auto>() {
+            @Override
+            public boolean accept(final Auto t) {            	
+                return t.getActivo() && t.getEstado().equals(Estado.LIBRE);
+            }
+        });
+    }    
     // }}
     
 	// {{  
@@ -145,7 +164,7 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 	}
 	// }}
 	/*
-    // {{ Listado de Autos filtrado por Cate
+    // {{ Listado de Autos filtrado por Categoria
 	public List<Auto> autoComplete(final Categoria lista) {
 		return allMatches(Auto.class, new Filter<Auto>() {
 		@Override

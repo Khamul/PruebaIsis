@@ -107,22 +107,33 @@ public class Alquiler {
 	public TipoPago getTipoPago() {
 		return tipoPago;
 	}
-	public void setTipoPago(TipoPago tipoPago) {
+	public void setTipoPago(final TipoPago tipoPago) {
 		this.tipoPago = tipoPago;
 	}
 	// }}	
 	
-	// Costo
+	// {{ Precio 
+	private float precio;
+	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
+	@MemberOrder(name="Medio de Pago",sequence="2")	
+	public float getPrecioAlquiler(){
+		return precio;
+	}
+	public void setPrecioAlquiler(final float precio){
+		this.precio=precio;
+	}
+	
+	// }}
 	
 	// {{ Numero de Recibo
 	private int recibo;
-
+	
 	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
 	@MemberOrder(name="Medio de Pago",sequence="3")
 	public int getNumeroRecibo() {
 		return recibo;
 	}
-	public void setNumeroRecibo(int recibo) {
+	public void setNumeroRecibo(final int recibo) {
 		this.recibo = recibo;
 	}
 	// }}	
