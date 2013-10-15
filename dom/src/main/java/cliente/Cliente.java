@@ -11,6 +11,7 @@ import org.apache.isis.applib.annotation.AutoComplete;
 import org.apache.isis.applib.annotation.DescribedAs;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.ObjectType;
 import org.apache.isis.applib.annotation.RegEx;
 import org.apache.isis.applib.filter.Filter;
@@ -33,7 +34,8 @@ public class Cliente {
 	public static enum TipoId {
 		CUIL, CUIT;
 	}	
-
+	
+	@Named("Cliente")
 	// {{ Identification on the UI
 	public String title() {
 		final TitleBuffer buf = new TitleBuffer();

@@ -256,7 +256,6 @@ public class Auto {
    	//}}
    	
    	
-   	
    	// {{ Filtro
    	public static Filter<Auto> thoseOwnedBy(final String currentUser){
         return new Filter<Auto>() {

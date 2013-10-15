@@ -17,6 +17,7 @@ import org.apache.isis.applib.filter.Filter;
 
 import categoria.Categoria;
 
+
 import com.google.common.base.Objects;
 
 
@@ -103,12 +104,10 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 		
 		}
 		else {
-			auto = null;
-//			 
-				getContainer().warnUser("YA SE ENCUENTRA ESTE AUTO");
-				System.out.println("YA SE ENCUENTRA ESTE AUTO");
-		}
-		
+			auto = null;		 
+			getContainer().warnUser("YA SE ENCUENTRA ESTE AUTO");
+			System.out.println("YA SE ENCUENTRA ESTE AUTO");
+		}		
 		return auto;
     }
  
@@ -133,19 +132,19 @@ public class AutoServicio extends AbstractFactoryAndRepository {
         });
     }
     // }}
-    /*
+    
 	// {{  
 	@Hidden    
 	public List<Auto> autoComplete(final String auto) {
 		return allMatches(Auto.class, new Filter<Auto>() {
 		@Override
 		public boolean accept(final Auto t) {		
-		return  t.getModelo().contains(auto)&& t.getActivo(); 
+			return t.getPatente().contains(auto) && t.getActivo() && t.getEstado().equals(Estado.LIBRE);
 		}
 	  });				
 	}
 	// }}
-	*/
+	/*
     // {{ Listado de Autos filtrado por Cate
 	public List<Auto> autoComplete(final Categoria lista) {
 		return allMatches(Auto.class, new Filter<Auto>() {
@@ -155,7 +154,7 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 		}
 	  });
 	}
-	// }}
+	// }}*/ 
 	
     /*
 	// }}
@@ -177,7 +176,6 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 	protected String currentUserName() {
 	    return getContainer().getUser().getName();
 	}
-	// }}
-	
+	// }}	
 	
 }

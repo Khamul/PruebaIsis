@@ -2,6 +2,8 @@ package alquiler;
 
 
 
+import java.util.Date;
+
 import javax.jdo.annotations.IdentityType;
 
 import javax.jdo.annotations.VersionStrategy;
@@ -24,14 +26,10 @@ import cliente.Cliente;
 
 
 
-
-import categoria.Categoria;
-
-
 @javax.jdo.annotations.PersistenceCapable(identityType=IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(strategy=javax.jdo.annotations.IdGeneratorStrategy.IDENTITY)
 @javax.jdo.annotations.Version(strategy=VersionStrategy.VERSION_NUMBER, column="VERSION")
-@MemberGroups({"Cliente", "Categoria","Auto","Medio de Pago"})
+@MemberGroups({"Cliente", "Categoria","Auto","Medio de Pago", "Fecha de Alquiler"})
 @AutoComplete(repository=AlquilerServicio.class, action="autoComplete")
 
 
@@ -61,7 +59,7 @@ public class Alquiler {
 	    this.ownedBy = ownedBy;	
 	}	
 	// }}
-	
+	/*
 	// {{ Categoria	
 	private Categoria categoria;
 	@DescribedAs("La categoria del vehiculo.")
@@ -74,7 +72,7 @@ public class Alquiler {
 		this.categoria=categoria;
 	}	
 	// }}
-	
+	*/
 	// {{ Auto	
 	private Auto auto;
 	@DescribedAs("El vehiculo.")
@@ -114,11 +112,13 @@ public class Alquiler {
 	}
 	// }}	
 	
+	// Costo
+	
 	// {{ Numero de Recibo
 	private int recibo;
 
 	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
-	@MemberOrder(name="Medio de Pago",sequence="2")
+	@MemberOrder(name="Medio de Pago",sequence="3")
 	public int getNumeroRecibo() {
 		return recibo;
 	}
@@ -127,6 +127,36 @@ public class Alquiler {
 	}
 	// }}	
 	
+  	// {{ Fecha de Alquiler del vehiculo
+    private Date fechaAlq;
+    @DescribedAs("Señala la fecha de alquiler del vehiculo.")
+    @MemberOrder(name="Fecha de Alquiler",sequence="1")
+    public Date getFechaAlquiler() {
+        return fechaAlq; 
+    }
+    public void setFechaAlquiler(final Date fechaAlq) {
+        this.fechaAlq= fechaAlq; 
+    }    
+    public void clearFechaAlquiler() {
+        setFechaAlquiler(null); 
+    }  
+    // }}
+	
+  	// {{ Fecha de Devolucion del vehiculo
+    private Date fechaDev;
+    @DescribedAs("Señala la fecha de devolución del vehiculo.")
+    @MemberOrder(name="Fecha de Alquiler",sequence="2")
+    public Date getFechaDevolucion() {
+        return fechaDev; 
+    }
+    public void setFechaDevolucion(final Date fechaDev) {
+        this.fechaDev= fechaDev; 
+    }    
+    public void clearFechaDevolucion() {
+        setFechaAlquiler(null); 
+    }  
+    // }}
+    
     // {{ Campo Activo
    	private boolean activo;
    	@Hidden

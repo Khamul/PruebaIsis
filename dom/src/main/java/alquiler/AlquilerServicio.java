@@ -1,6 +1,7 @@
 package alquiler;
 
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -13,7 +14,6 @@ import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.filter.Filter;
 
-import categoria.Categoria;
 
 import cliente.Cliente;
 
@@ -23,6 +23,8 @@ import com.google.common.base.Objects;
 import alquiler.Alquiler;
 import alquiler.Alquiler.TipoPago;
 import autos.Auto;
+import autos.Auto.Estado;
+
 
 
 @Named("Alquiler")
@@ -106,42 +108,63 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 		
 	// {{ 
 	// Carga de Alquiler
-	public Alquiler CargarAlquiler(
-			@Named("Categoria") Categoria categoria,	
+	public Alquiler CargarAlquiler(			
 			@Named("Auto") Auto auto, 
 			@Named("Numero Cuil/Cuit") Cliente cliente,
 			@Named("Tipo de Pago") TipoPago tipoPago,
-			@Named("Numero de Recibo") int numeroRecibo) {
+			@Named("Numero de Recibo") int numeroRecibo,
+			@Named("Fecha Alquiler")Date fechaAlq,
+			@Named("Fecha Devolucion")Date fechaDev) {
 		final boolean activo = true;
 		final String ownedBy = currentUserName();
-		return elAlq(categoria, auto, cliente, tipoPago, numeroRecibo ,activo, ownedBy);
+		return elAlq(auto, cliente, tipoPago, numeroRecibo, fechaAlq, fechaDev, activo, ownedBy);
 
 	}
 	// }}
+	
 	// {{
 	@Hidden
 	// for use by fixtures
-	public Alquiler elAlq(final Categoria categoria,
+	public Alquiler elAlq(
 			final Auto auto,
 			final Cliente cliente,			
 			final TipoPago tipoPago,
 			final int numRecibo, 
+			final Date fechaAlq,
+			final Date fechaDev,
 			final boolean activo,
 			final String userName) {
 		final Alquiler alquiler = newTransientInstance(Alquiler.class);
-		alquiler.setCategoria(categoria);
+		
 		alquiler.setAuto(auto);
 		alquiler.setClienteId(cliente);
 		alquiler.setTipoPago(tipoPago);
 		alquiler.setNumeroRecibo(numRecibo);
+		alquiler.setFechaAlquiler(fechaAlq);
+		alquiler.setFechaDevolucion(fechaDev);
 		alquiler.setOwnedBy(userName);
 		alquiler.setActivo(true);
-	
+		auto.setEstado(Estado.ALQUILADO);
 		persistIfNotAlready(alquiler);
 		
 		return alquiler;
 	}
 	// }}
+	
+	
+	public List<Auto> choices0CargarAlquiler(){
+		List<Auto> items = doCompleteA();
+		
+		return items;
+	}
+    protected List<Auto> doCompleteA() {
+        return allMatches(Auto.class, new Filter<Auto>() {
+            @Override
+            public boolean accept(final Auto t) {            	          	
+                return t.getActivo() && t.getEstado().equals(Estado.LIBRE);            	          	
+            }
+        });
+    }
 	
 	// {{ complete (action)
 	@ActionSemantics(Of.SAFE)
@@ -164,7 +187,6 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 	}
 	// }}	
 	
-	
 		
 	// {{ Helpers
 	protected boolean ownedByCurrentUser(final Alquiler t) {
@@ -174,4 +196,16 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 	    return getContainer().getUser().getName();
 	}
 	// }}
+	
+	/*
+	 * 
+	 *  public List<Order> findRecentOrders(Customer customer, @Named("Number of Orders") 
+	 *  Integer numberOfOrders) { 
+	 *  List<Order> orders = customer.getOrders(); 
+	 *  Collections.sort(orders, new Comparator<Order>() *  {
+	 *   public int compare(Order o1, Order o2) {
+	 *   long time1 = o1.getOrderDate().getTime(); 
+	 *   long time2 = o2.getOrderDate().getTime(); 
+	 *   return (int) (time2 - time1); }
+	 * */	
 }
