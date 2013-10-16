@@ -24,7 +24,7 @@ import cliente.Cliente.TipoId;
 @Named("Cliente")
 public class ClienteServicio extends AbstractFactoryAndRepository {
 	
-	//Carga de clientes
+	// {{ Carga de clientes
 	@MemberOrder(sequence = "1")
 	public Cliente CargarCliente(@Named("Nombre") String nombre,
 			@Named("Apellido") String apellido,
@@ -80,19 +80,20 @@ public class ClienteServicio extends AbstractFactoryAndRepository {
 
 		return cliente;
 	} 
+	// }}
 	
 	// {{ complete (action)
 	@ActionSemantics(Of.SAFE)
 	@MemberOrder(sequence = "2")
-	public List<Cliente> ClienteActivos() {
-		List<Cliente> items = doComplete();
+	public List<Cliente> listadoClienteActivos() {
+		List<Cliente> items = listaClientes();
 		if (items.isEmpty()) {
 			getContainer().informUser("No hay clientes activos :-(");
 		}
 		return items;
 	}
 
-	protected List<Cliente> doComplete() {
+	protected List<Cliente> listaClientes() {
 		return allMatches(Cliente.class, new Filter<Cliente>() {
 			@Override
 			public boolean accept(final Cliente t) {
@@ -107,13 +108,12 @@ public class ClienteServicio extends AbstractFactoryAndRepository {
 		return allMatches(Cliente.class, new Filter<Cliente>() {
 		@Override
 		public boolean accept(final Cliente t) {		
-		return t.getNumeroIdent().contains(cliente) ; 
+		return t.getNumeroIdent().contains(cliente) && t.getActivo(); 
 		}
 	  });				
 	}
 	// }}
-	
-	 
+		 
 	// {{ Helpers
 	protected boolean ownedByCurrentUser(final Cliente t) {
 		return Objects.equal(t.getOwnedBy(), currentUserName());

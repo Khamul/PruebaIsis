@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AutosJdo extends AutoServicio{
 	@Override
-    public List<Auto> AutosActivos() {
+    public List<Auto> listadoAutosActivos() {
         return allMatches(
                 new QueryDefault<Auto>(Auto.class, 
                         "listado_autos"));

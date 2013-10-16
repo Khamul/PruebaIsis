@@ -30,8 +30,8 @@ import autos.Auto.Estado;
 @Named("Alquiler")
 public class AlquilerServicio extends AbstractFactoryAndRepository{
 		
-	// {{ 
-	// Carga de Alquiler
+	// {{ Carga de Alquiler
+	@MemberOrder(sequence = "1")
 	public Alquiler CargarAlquiler(			
 			@Named("Auto") Auto auto, 
 			@Named("Numero Cuil/Cuit") Cliente cliente,
@@ -79,15 +79,13 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 		
 		return alquiler;
 	}
-	// }}
-	
-	
+	// }}	
 	public List<Auto> choices0CargarAlquiler(){
-		List<Auto> items = doCompleteA();
+		List<Auto> items = listaAutosLibres();
 		
 		return items;
 	}
-    protected List<Auto> doCompleteA() {
+    protected List<Auto> listaAutosLibres() {
         return allMatches(Auto.class, new Filter<Auto>() {
             @Override
             public boolean accept(final Auto t) {            	          	
@@ -95,29 +93,9 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
             }
         });
     }
-	
-	// {{ complete (action)
-	@ActionSemantics(Of.SAFE)
-	@MemberOrder(sequence = "2")
-	public List<Alquiler> AlquileresActivos() {
-		List<Alquiler> items = doComplete();
-		if (items.isEmpty()) {
-			getContainer().informUser("No hay alquileres activos ");
-		}
-		return items;
-	}
-
-	protected List<Alquiler> doComplete() {
-		return allMatches(Alquiler.class, new Filter<Alquiler>() {
-			@Override
-			public boolean accept(final Alquiler t) {
-				return t.getActivo();
-			}
-		});
-	}
-	// }}	
-	
-	// {{
+    // }}
+    
+    // {{ Calculo de diferencia de dias entre fechas.
 	protected int calculoDias(final Date a1, final Date a2){
 		long inicio=a1.getTime();
 		long fin =a2.getTime();
@@ -128,23 +106,137 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 	}
 	// }}
 	
-	// {{  
-	@MemberOrder(sequence = "3")   
-	public List<Alquiler> listadoAlquileres(final Date fecha1, final Date fecha2 ) {
+	// {{ Listado de Alquileres Activos
+	@ActionSemantics(Of.SAFE)
+	@MemberOrder(sequence = "2")
+	public List<Alquiler> listadoAlquileresActivos() {
+		List<Alquiler> items = listaAlquileresActivos();
+		if (items.isEmpty()) {
+			getContainer().informUser("No hay alquileres activos ");
+		}
+		return items;
+	}
+
+	protected List<Alquiler> listaAlquileresActivos() {
+		return allMatches(Alquiler.class, new Filter<Alquiler>() {
+			@Override
+			public boolean accept(final Alquiler t) {
+				return t.getActivo();
+			}
+		});
+	}
+	// }}	
+	
+	// {{ Listado de Alquileres entre Fechas
+	@MemberOrder(sequence = "3")
+	public List<Alquiler> listadoAlquileresEntreFechas(@Named("Fecha Inicio") final Date fecha1, @Named("Fecha Fin") final Date fecha2 ) {
 		return allMatches(Alquiler.class, new Filter<Alquiler>() {
 		@Override
 		public boolean accept(final Alquiler t) {		
-			if (fecha1.getTime()>=t.getFechaAlquiler().getTime() && fecha2.getTime()<=t.getFechaDevolucion().getTime()){
+			if (fecha1.getTime()<=t.getFechaAlquiler().getTime() && fecha2.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()<=t.getFechaDevolucion().getTime()){
+				getContainer().informUser("Fuera del rango pero existen alquileres");
 				return t.getAuto().getActivo(); 
 			}
-			else{
-				getContainer().informUser("No hay alquileres entre dichas fechas");
-			return false;
+			if (fecha1.getTime()<=t.getFechaAlquiler().getTime() && fecha2.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()>=t.getFechaDevolucion().getTime()){
+				getContainer().informUser("Fuera del rango pero existen alquileres");
+				return t.getAuto().getActivo(); 
 			}
+			if (fecha1.getTime()<=t.getFechaAlquiler().getTime() && fecha2.getTime()<t.getFechaAlquiler().getTime()){
+				getContainer().informUser("Fuera del rango");
+				return false; 
+			}
+			if (fecha1.getTime()>t.getFechaAlquiler().getTime() && fecha1.getTime()<t.getFechaDevolucion().getTime() && fecha2.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()<=t.getFechaDevolucion().getTime()){
+				getContainer().informUser("Fuera del rango pero existen alquileres");
+				return t.getAuto().getActivo(); 
+			}
+			if (fecha1.getTime()>t.getFechaAlquiler().getTime() && fecha1.getTime()<t.getFechaDevolucion().getTime() && fecha2.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()>=t.getFechaDevolucion().getTime()){
+				getContainer().informUser("Fuera del rango pero existen alquileres");
+				return t.getAuto().getActivo(); 
+			}
+			if (fecha1.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()<t.getFechaAlquiler().getTime() ){
+				getContainer().informUser("Fuera del rango");
+				return false; 
+			}
+			if (fecha1.getTime()>t.getFechaAlquiler().getTime() && fecha1.getTime()>t.getFechaDevolucion().getTime() ){
+				getContainer().informUser("Fuera del rango");
+				return false; 
+			}
+			if (fecha1.getTime()<t.getFechaAlquiler().getTime() && fecha2.getTime()>=t.getFechaAlquiler().getTime()){
+				getContainer().informUser("La seleccion termina cuando empieza un alquiler");
+				return t.getAuto().getActivo(); 
+			}
+			if (fecha1.getTime()<=t.getFechaDevolucion().getTime() && fecha2.getTime()>t.getFechaDevolucion().getTime()){
+				getContainer().informUser("La seleccion empieza cuando termina un alquiler");
+				return t.getAuto().getActivo(); 
+			}
+			else return false;
 		}
 	  });				
 	}
 	// }}
+	
+	//return lista.equals(t.getAuto())&& t.getActivo();
+	// {{ Listado de Alquileres filtrado por Auto
+	@MemberOrder(sequence = "4")    
+	public List<Alquiler> listadoAlquileresPorAuto(final Auto lista,@Named("Fecha Inicio")final Date fecha1,@Named("Fecha Fin") final Date fecha2) {
+		return allMatches(Alquiler.class, new Filter<Alquiler>() {
+		@Override
+		public boolean accept(Alquiler t){
+			if (fecha1.getTime()<=t.getFechaAlquiler().getTime() && fecha2.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()<=t.getFechaDevolucion().getTime()){
+				getContainer().informUser("Fuera del rango pero existen alquileres");
+				return lista.equals(t.getAuto())&& t.getActivo();
+			}
+			if (fecha1.getTime()<=t.getFechaAlquiler().getTime() && fecha2.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()>=t.getFechaDevolucion().getTime()){
+				
+				return lista.equals(t.getAuto())&& t.getActivo(); 
+			}
+			if (fecha1.getTime()<=t.getFechaAlquiler().getTime() && fecha2.getTime()<t.getFechaAlquiler().getTime()){
+				getContainer().informUser("Fuera del rango");
+				return false; 
+			}
+			if (fecha1.getTime()>t.getFechaAlquiler().getTime() && fecha1.getTime()<t.getFechaDevolucion().getTime() && fecha2.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()<=t.getFechaDevolucion().getTime()){
+				getContainer().informUser("Fuera del rango pero existen alquileres");
+				return lista.equals(t.getAuto())&& t.getActivo(); 
+			}
+			if (fecha1.getTime()>t.getFechaAlquiler().getTime() && fecha1.getTime()<t.getFechaDevolucion().getTime() && fecha2.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()>=t.getFechaDevolucion().getTime()){
+				getContainer().informUser("Fuera del rango pero existen alquileres");
+				return lista.equals(t.getAuto())&& t.getActivo();
+			}
+			if (fecha1.getTime()>t.getFechaAlquiler().getTime() && fecha2.getTime()<t.getFechaAlquiler().getTime() ){
+				getContainer().informUser("Fuera del rango");
+				return false; 
+			}
+			if (fecha1.getTime()>t.getFechaAlquiler().getTime() && fecha1.getTime()>t.getFechaDevolucion().getTime() ){
+				getContainer().informUser("Fuera del rango");
+				return false; 
+			}
+			if (fecha1.getTime()<t.getFechaAlquiler().getTime() && fecha2.getTime()>=t.getFechaAlquiler().getTime()){
+				getContainer().informUser("La seleccion termina cuando empieza un alquiler");
+				return lista.equals(t.getAuto())&& t.getActivo();
+			}
+			if (fecha1.getTime()<=t.getFechaDevolucion().getTime() && fecha2.getTime()>t.getFechaDevolucion().getTime()){
+				getContainer().informUser("La seleccion empieza cuando termina un alquiler");
+				return lista.equals(t.getAuto())&& t.getActivo();
+			}
+			else return false;
+			
+		}
+	  });
+	}		
+	public List<Auto> choices0ListadoAlquileresPorAuto(){
+		List<Auto> items = listaAutosActivos();
+		
+		return items;
+	}
+    protected List<Auto> listaAutosActivos() {
+        return allMatches(Auto.class, new Filter<Auto>() {
+            @Override
+            public boolean accept(final Auto t) {            	          	
+                return t.getActivo();            	          	
+            }
+        });
+    }
+    // }}	
 		
 	// {{ Helpers
 	protected boolean ownedByCurrentUser(final Alquiler t) {

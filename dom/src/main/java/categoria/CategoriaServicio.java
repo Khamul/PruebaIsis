@@ -9,7 +9,10 @@ import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.NotInServiceMenu;
 import org.apache.isis.applib.filter.Filter;
+
+import autos.Auto;
 
 import com.google.common.base.Objects;
 
@@ -21,6 +24,7 @@ import categoria.Categoria.Traccion;
 @Named("Categoria")
 public class CategoriaServicio extends AbstractFactoryAndRepository {
 	
+	// {{ Carga Categoria
 	@MemberOrder(sequence="1")
 	public Categoria CargarCategoria(
 			@Named("Categoria")String categoria,
@@ -58,19 +62,21 @@ public class CategoriaServicio extends AbstractFactoryAndRepository {
 			persist(categoria);
 			return categoria;
 		}
+	// }}
 	
-	// {{ complete (action)
+	// {{ Listado de Categorias Activas
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "2")
-    protected List<Categoria> CategoriaActivos() {
-        List<Categoria> items = doComplete();
+    @NotInServiceMenu
+    public List<Categoria> CategoriaActivos() {
+        List<Categoria> items = listaCategorias();
         if(items.isEmpty()) {
             getContainer().informUser("No hay categorias activas :-(");
         }
         return items;
     }
 
-    protected List<Categoria> doComplete() {
+    protected List<Categoria> listaCategorias() {
         return allMatches(Categoria.class, new Filter<Categoria>() {
             @Override
             public boolean accept(final Categoria t) {
@@ -80,6 +86,18 @@ public class CategoriaServicio extends AbstractFactoryAndRepository {
     }
     // }}	
     
+	// {{ Listado de Autos filtrado por Categoria
+    @MemberOrder(sequence="3") 
+	public List<Auto> listadoAutosPorCategoria(final Categoria lista) {
+		return allMatches(Auto.class, new Filter<Auto>() {
+		@Override
+		public boolean accept(Auto t){
+		return  lista.equals(t.getCategoria())&& t.getActivo();
+		}
+	  });
+	}
+	// }} 
+	
 	// {{ 
 	@Hidden    
 	public List<Categoria> autoComplete(final String cat) {
@@ -90,8 +108,7 @@ public class CategoriaServicio extends AbstractFactoryAndRepository {
 		}
 	  });				
 	}
-	// }}
-    
+	// }}    
 		
 	// {{ helpers
 	protected boolean ownedByCurrentUser(final Categoria t) {

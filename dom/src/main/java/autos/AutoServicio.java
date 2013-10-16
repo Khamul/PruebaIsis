@@ -110,12 +110,39 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 		}		
 		return auto;
     }
- 
+	// }}
+	public List<Marca> choices1CargarAuto(){
+		List<Marca> items = listaMarcasActivas();		
+		return items;
+	}
+    protected List<Marca> listaMarcasActivas() {
+        return allMatches(Marca.class, new Filter<Marca>() {
+            @Override
+            public boolean accept(final Marca t) {            	          	
+                return t.getActivo();            	          	
+            }
+        });
+    }
+    // }}
+	public List<Categoria> choices4CargarAuto(){
+		List<Categoria> items = listaCategoriasActivas();		
+		return items;
+	}
+    protected List<Categoria> listaCategoriasActivas() {
+        return allMatches(Categoria.class, new Filter<Categoria>() {
+            @Override
+            public boolean accept(final Categoria t) {            	          	
+                return t.getActivo();            	          	
+            }
+        });
+    }
+    // }}
 	
-	// {{ complete (action)
+		
+	// {{ Listado de Autos Activos
     @ActionSemantics(Of.SAFE)
-	@MemberOrder(sequence = "2") // Listado de Autos Activos
-    public List<Auto> AutosActivos() {
+	@MemberOrder(sequence = "2") 
+    public List<Auto> listadoAutosActivos() {
         List<Auto> items = listadoActivos();
         if(items.isEmpty()) {
             getContainer().informUser("No hay autos activos ");
@@ -133,9 +160,9 @@ public class AutoServicio extends AbstractFactoryAndRepository {
     }
     // }}
     
-    // {{
-	@MemberOrder(sequence = "3") // Listado de Autos Libres
-    public List<Auto> AutosLibres() {
+    // {{  Listado de Autos Libres
+	@MemberOrder(sequence = "3") 
+    public List<Auto> listadoAutosLibres() {
         List<Auto> items = listadoLibres();
         if(items.isEmpty()) {
             getContainer().informUser("No hay autos Libres ");
@@ -163,17 +190,7 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 	  });				
 	}
 	// }}
-	/*
-    // {{ Listado de Autos filtrado por Categoria
-	public List<Auto> autoComplete(final Categoria lista) {
-		return allMatches(Auto.class, new Filter<Auto>() {
-		@Override
-		public boolean accept(Auto t){
-		return  lista.equals(t.getCategoria())&& t.getActivo();
-		}
-	  });
-	}
-	// }}*/ 
+
 	
     /*
 	// }}

@@ -46,7 +46,7 @@ public class MarcaServicio extends AbstractFactoryAndRepository {
 	}
 	// }}	
 	@MemberOrder(sequence = "2") // Listado de Marca 
-	public List<Marca> ListaMarcas() {
+	public List<Marca> ListadoMarcas() {
 	     return allMatches(Marca.class, new Filter<Marca>() {
 	     @Override
 	     public boolean accept(final Marca t) {
@@ -58,7 +58,7 @@ public class MarcaServicio extends AbstractFactoryAndRepository {
 	
 	// {{ Listado de Autos filtrado por Marcas
 	
-	public List<Auto> AutosPorMarca(final Marca lista) {
+	public List<Auto> listadoAutosPorMarca(final Marca lista) {
 		return allMatches(Auto.class, new Filter<Auto>() {
 		@Override
 		public boolean accept(Auto t){
@@ -74,7 +74,7 @@ public class MarcaServicio extends AbstractFactoryAndRepository {
 		return allMatches(Marca.class, new Filter<Marca>() {
 		@Override
 		public boolean accept(final Marca t) {		
-		return ownedByCurrentUser(t) && t.getNombre().contains(marcas); 
+		return t.getActivo() && t.getNombre().contains(marcas) ; 
 		}
 	  });				
 	}

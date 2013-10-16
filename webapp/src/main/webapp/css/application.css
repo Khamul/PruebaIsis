@@ -21,12 +21,15 @@
 uncomment to add a logo (in an ../images directory relative to this file)
 */
 #header {
-    height: 80px;
-    width: 180px;
-    background-image: url("../images/logo.png width="80'" height=80");
-	background-repeat: no-repeat;
+    height: 101px;   
+    background-image: url("../images/loguito1.png);
 	color:rgb(246,116,0);
 	
+}
+
+.headerContainer{
+	
+	 background-image: url("../images/loguito1.png");
 }
 
 
