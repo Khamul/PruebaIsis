@@ -35,6 +35,8 @@ public class AlquilerServicio2 extends AbstractFactoryAndRepository{
     		if(disponibilidad.size()>0){
     			alquiler.setClienteId(cliente);
     			alquiler.setFecha(LocalDate.now().toDate());
+    			alquiler.setNombreCliente(cliente.getNombre());
+    			alquiler.setApellidoCliente(cliente.getApellido());
     			
     			for (Disponibles disp:disponibilidad){
     				if (disp.estaSeleccionada()){
@@ -43,6 +45,7 @@ public class AlquilerServicio2 extends AbstractFactoryAndRepository{
     					autoF.setCategoria(disp.getCategoria());
     					autoF.setPatente(disp.getPatente());
     					autoF.setAlquiler(alquiler);
+    					autoF.setModeloAuto(disp.getModeloAuto());
     					alquiler.addToHabitacion(autoF);
     					persistIfNotAlready(autoF);
     				}  
@@ -52,9 +55,19 @@ public class AlquilerServicio2 extends AbstractFactoryAndRepository{
     		}
     	return alquiler;
 	}
+    // }}
     
+    // {{ 
     private List<Disponibles> listaAutosReservados() {         
         return allMatches(QueryDefault.create(Disponibles.class, "Disponibles"));
     } 
+    // }}
     
+    // {{
+    @Named("Listado Alquileres")
+    @MemberOrder(sequence="2")
+    public List<Alquiler2> listaAlquileres() {
+            return allMatches(QueryDefault.create(Alquiler2.class, "traerAlquileres"));
+    }
+    // }}
 }

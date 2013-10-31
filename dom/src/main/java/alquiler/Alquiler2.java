@@ -35,9 +35,8 @@ import disponibles.AutosPorFecha;
 
 @javax.jdo.annotations.PersistenceCapable(identityType=IdentityType.APPLICATION)
 @javax.jdo.annotations.Version(strategy=VersionStrategy.VERSION_NUMBER, column="VERSION")
-@MemberGroups({"Estados","Datos del Alquiler","Autos"})
-//@javax.jdo.annotations.Query(name="reservas", language="JDOQL",value="SELECT FROM dom.reserva.Reserva order by numero desc")
-//@AutoComplete(repository=ReservaServicio.class, action="completaReservas")
+@MemberGroups({"Estado","Datos del Alquiler","Autos"})
+@javax.jdo.annotations.Query(name="traerAlquileres", language="JDOQL",value="SELECT FROM alquiler.Alquiler2 order by numero asc")
 @AutoComplete(repository=AlquilerServicio.class, action="autoComplete")
 @Audited 
 @ObjectType("ALQUILER2")
@@ -64,6 +63,7 @@ public class Alquiler2 {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Long numero;
     @Disabled
+    @Named("Nro Alquiler")
     @MemberOrder(name="Datos del Alquiler",sequence="1")
     public Long getNumero() {
             return numero;
@@ -77,7 +77,7 @@ public class Alquiler2 {
     @Named("Estado")
     @NotPersisted
     @Hidden(where=Where.ALL_TABLES)
-    @MemberOrder(name="Estados",sequence="1")
+    @MemberOrder(name="Estado",sequence="1")
     public String getNombreEstado() {
             nombreEstado = getEstado().toString();
             return nombreEstado;
@@ -181,14 +181,43 @@ public class Alquiler2 {
 	// {{ Cliente		
 	private Cliente clienteId;
 	@DescribedAs("Numero de CUIL/CUIT")
-	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
-	@MemberOrder(name="Cliente",sequence="2")	
+	@Disabled
+	@Named("CUIL/CUIT")
+	@MemberOrder(name="Cliente",sequence="1")	
 	public Cliente getClienteId() {
 		return clienteId;
 	}	
 	public void setClienteId(final Cliente clienteId)	{		
 		this.clienteId=clienteId;
 	}	
+	// }}
+	
+	// {{ Nombre
+	private String nombre;
+	@Disabled
+	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
+	@Named("Nombre")
+	@MemberOrder(name="Cliente",sequence="2")	
+	public String getNombreCliente() {
+		return nombre;
+	}
+	public void setNombreCliente(String nombre) {
+		this.nombre = nombre;
+	}
+	// }}
+
+	// {{ Apellido
+	private String apellido;
+	@Disabled
+	@RegEx(validation = "\\w[@&:\\-\\,\\.\\+ \\w]*")
+	@Named("Apellido")
+	@MemberOrder(name="Cliente",sequence="3")	
+	public String getApellidoCliente() {
+		return apellido;
+	}
+	public void setApellidoCliente(String apellido) {
+		this.apellido = apellido;
+	}
 	// }}
     	
     // {{ injected: DomainObjectContainer

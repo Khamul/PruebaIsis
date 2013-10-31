@@ -82,6 +82,17 @@ public class AutosPorFecha {
     }
     // }}
     
+    // {{
+    private String modelo;
+    @Named("Modelo")
+    public String getModeloAuto(){
+    	return modelo;
+    }
+    public void setModeloAuto(final String modelo){
+    	this.modelo=modelo;
+    }
+    // }}
+    
     @SuppressWarnings("unused")
 	private DomainObjectContainer container;    
     public void injectDomainObjectContainer(final DomainObjectContainer container) {

@@ -40,9 +40,11 @@ public class DisponiblesServicio extends AbstractFactoryAndRepository{
                 	   disp.setPatente(autoFecha.getPatente());
                 	   disp.setCategoria(autoFecha.getCategoria());
                 	   disp.setAlquiler(autoFecha.getAlquiler());
+                	   disp.setModeloAuto(autoFecha.getModeloAuto());
                    }
                    else{
                 	   disp.setPatente(auto.getPatente());
+                	   disp.setModeloAuto(auto.getModelo());
                 	   disp.setCategoria(auto.getCategoria());
                    }
                    disp.setFecha(fechaAux.toDate());

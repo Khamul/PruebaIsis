@@ -3,6 +3,7 @@ package disponibles;
 
 
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.jdo.annotations.IdentityType;
@@ -11,6 +12,7 @@ import javax.jdo.annotations.VersionStrategy;
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.Audited;
 import org.apache.isis.applib.annotation.Bulk;
+import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.ObjectType;
 import org.apache.isis.applib.util.TitleBuffer;
@@ -45,7 +47,8 @@ public class Disponibles {
 	    
     // {{	
     private String auto;
-    @Named("Auto")
+    @Hidden
+    @Named("Patente")
     public String getPatente(){
     	return auto;
     }
@@ -66,8 +69,13 @@ public class Disponibles {
     // }}
     
     // {{
-    private Date fecha;
     @Named("Fecha")
+    public String getFechaString() {
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        return formato.format(getFecha());
+    }
+    private Date fecha;
+    @Hidden
     public Date getFecha() {
             return fecha;
     }
@@ -98,15 +106,14 @@ public class Disponibles {
     }
     
     // {{
-    @Bulk
     @Named("Seleccionar")
+    @Bulk    
     public Disponibles reserva(){
     	if (getAlquiler()==null){
-    		if(estaSeleccionada()){
+    		if(estaSeleccionada())
     			setEstaSeleccionada(false);
-    		}else{
-    			setEstaSeleccionada(true);
-    		}
+    		else
+    			setEstaSeleccionada(true);  		
     	}    	
     	return this;    	
     }
@@ -115,6 +122,17 @@ public class Disponibles {
     public String disableReserva() {
     return seleccionar ? "Ya esta seleccionada!" : null;
     }  
+    
+    // {{
+    private String modelo;
+    @Named("Modelo")
+    public String getModeloAuto(){
+    	return modelo;
+    }
+    public void setModeloAuto(final String modelo){
+    	this.modelo=modelo;
+    }
+    // }}
     
     // {{ Inyeccion del Servicio
     @SuppressWarnings("unused")
