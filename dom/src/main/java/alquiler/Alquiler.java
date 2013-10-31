@@ -3,11 +3,8 @@ package alquiler;
 
 
 import java.util.Date;
-
 import javax.jdo.annotations.IdentityType;
-
 import javax.jdo.annotations.VersionStrategy;
-
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.AutoComplete;
 import org.apache.isis.applib.annotation.DescribedAs;
@@ -20,10 +17,8 @@ import org.apache.isis.applib.util.TitleBuffer;
 import org.apache.isis.applib.annotation.MemberGroups;
 
 import autos.Auto;
-
+import categoria.Categoria;
 import cliente.Cliente;
-
-
 
 
 @javax.jdo.annotations.PersistenceCapable(identityType=IdentityType.DATASTORE)
@@ -59,7 +54,7 @@ public class Alquiler {
 	    this.ownedBy = ownedBy;	
 	}	
 	// }}
-	/*
+	
 	// {{ Categoria	
 	private Categoria categoria;
 	@DescribedAs("La categoria del vehiculo.")
@@ -72,7 +67,7 @@ public class Alquiler {
 		this.categoria=categoria;
 	}	
 	// }}
-	*/
+	
 	// {{ Auto	
 	private Auto auto;
 	@DescribedAs("El vehiculo.")

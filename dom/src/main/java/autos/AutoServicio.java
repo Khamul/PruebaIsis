@@ -3,24 +3,17 @@ package autos;
 
 import java.util.Date;
 import java.util.List;
-
 import org.apache.isis.applib.AbstractFactoryAndRepository;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
-
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.filter.Filter;
-
-
+import org.apache.isis.applib.query.QueryDefault;
 
 import categoria.Categoria;
-
-
 import com.google.common.base.Objects;
-
-
 import autos.Auto;
 import autos.Auto.Estado;
 import autos.Auto.Seguro;
@@ -106,7 +99,6 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 		else {
 			auto = null;		 
 			getContainer().warnUser("YA SE ENCUENTRA ESTE AUTO");
-			System.out.println("YA SE ENCUENTRA ESTE AUTO");
 		}		
 		return auto;
     }
@@ -142,6 +134,10 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 	// {{ Listado de Autos Activos
     @ActionSemantics(Of.SAFE)
 	@MemberOrder(sequence = "2") 
+    public List<Auto> listadoAutosActivos(){
+    	return allMatches(QueryDefault.create(Auto.class,"listado_autos"));
+    }
+    /*
     public List<Auto> listadoAutosActivos() {
         List<Auto> items = listadoActivos();
         if(items.isEmpty()) {
@@ -159,7 +155,7 @@ public class AutoServicio extends AbstractFactoryAndRepository {
         });
     }
     // }}
-    
+    */
     // {{  Listado de Autos Libres
 	@MemberOrder(sequence = "3") 
     public List<Auto> listadoAutosLibres() {
@@ -192,19 +188,20 @@ public class AutoServicio extends AbstractFactoryAndRepository {
 	// }}
 
 	
-    /*
+    
 	// }}
-    @MemberOrder(sequence = "3") // Busqueda de Autos
-    public List<Auto> busquedaAutos(@Named("Patente")final String description) {    	
+	
+    @MemberOrder(sequence = "3") // Busqueda de Autos por Categoria
+    public List<Auto> busquedaAutosPorCategoria(@Named("Categoria")final Categoria description) {    	
         return allMatches(Auto.class, new Filter<Auto>() {
             @Override
             public boolean accept(final Auto t) {
-                return  t.getPatente().contains(description) && t.getActivo();  
+                return  t.getCategoria().equals(description) && t.getActivo();  
             }
         });
     }
     // }}
-    */
+    
 	// {{ Helpers
 	protected boolean ownedByCurrentUser(final Auto t) {
 	    return Objects.equal(t.getOwnedBy(), currentUserName());

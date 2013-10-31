@@ -3,9 +3,6 @@ package alquiler;
 
 import java.util.Date;
 import java.util.List;
-
-
-
 import org.apache.isis.applib.AbstractFactoryAndRepository;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.Hidden;
@@ -14,17 +11,13 @@ import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.filter.Filter;
 
-
+import categoria.Categoria;
 import cliente.Cliente;
-
-
 import com.google.common.base.Objects;
-
 import alquiler.Alquiler;
 import alquiler.Alquiler.TipoPago;
 import autos.Auto;
 import autos.Auto.Estado;
-
 
 
 @Named("Alquiler")
@@ -32,7 +25,8 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 		
 	// {{ Carga de Alquiler
 	@MemberOrder(sequence = "1")
-	public Alquiler CargarAlquiler(			
+	public Alquiler CargarAlquiler(	
+			@Named("Categoria") Categoria categoria,
 			@Named("Auto") Auto auto, 
 			@Named("Numero Cuil/Cuit") Cliente cliente,
 			@Named("Tipo de Pago") TipoPago tipoPago,
@@ -41,7 +35,7 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 			@Named("Fecha Devolucion") Date fechaDev) {
 		final boolean activo = true;
 		final String ownedBy = currentUserName();
-		return elAlq(auto, cliente, tipoPago, numeroRecibo, fechaAlq, fechaDev, activo, ownedBy);
+		return elAlq(categoria, auto, cliente, tipoPago, numeroRecibo, fechaAlq, fechaDev, activo, ownedBy);
 
 	}
 	// }}
@@ -49,7 +43,7 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 	// {{
 	@Hidden
 	// for use by fixtures
-	public Alquiler elAlq(
+	public Alquiler elAlq(final Categoria categoria,
 			final Auto auto,
 			final Cliente cliente,			
 			final TipoPago tipoPago,
@@ -57,30 +51,53 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
 			final Date fechaAlq,
 			final Date fechaDev,
 			final boolean activo,
-			final String userName) {
-		final Alquiler alquiler = newTransientInstance(Alquiler.class);
+			final String userName) {	
 		
-		float dias=calculoDias(fechaAlq, fechaDev);
-		float costo=auto.getCategoria().getPrecio();
-		float precio=dias*costo;
+			Alquiler alquiler = newTransientInstance(Alquiler.class);		
+			
+			if (fechaDev.getTime()>fechaAlq.getTime()){
 				
-		alquiler.setAuto(auto);
-		alquiler.setClienteId(cliente);
-		alquiler.setTipoPago(tipoPago);
-		alquiler.setPrecioAlquiler(precio);
-		alquiler.setNumeroRecibo(numRecibo);
-		alquiler.setFechaAlquiler(fechaAlq);
-		alquiler.setFechaDevolucion(fechaDev);
-		alquiler.setOwnedBy(userName);
-		alquiler.setActivo(true);
-		auto.setEstado(Estado.ALQUILADO);
-		
-		persistIfNotAlready(alquiler);
+				float dias=calculoDias(fechaAlq, fechaDev);
+				float costo=auto.getCategoria().getPrecio();
+				float precio=dias*costo;				
+				
+				alquiler.setCategoria(categoria);
+				alquiler.setAuto(auto);
+				alquiler.setClienteId(cliente);
+				alquiler.setTipoPago(tipoPago);
+				alquiler.setPrecioAlquiler(precio);
+				alquiler.setNumeroRecibo(numRecibo);
+				alquiler.setFechaAlquiler(fechaAlq);
+				alquiler.setFechaDevolucion(fechaDev);
+				alquiler.setOwnedBy(userName);
+				alquiler.setActivo(true);
+				auto.setEstado(Estado.ALQUILADO);
+				
+				persistIfNotAlready(alquiler);		
+			
+			}
+			else{
+				alquiler=null;
+				getContainer().warnUser("La fecha de Devolucion tiene que ser mayor a la de Alquiler");
+			}
 		
 		return alquiler;
 	}
 	// }}	
-	public List<Auto> choices0CargarAlquiler(){
+	public List<Categoria> choices0CargarAlquiler(){
+		List<Categoria> items = listaCategorias();
+		
+		return items;
+	}
+    protected List<Categoria> listaCategorias() {
+        return allMatches(Categoria.class, new Filter<Categoria>() {
+            @Override
+            public boolean accept(final Categoria t) {            	          	
+                return t.getActivo();            	          	
+            }
+        });
+    }
+	public List<Auto> choices1CargarAlquiler(){
 		List<Auto> items = listaAutosLibres();
 		
 		return items;
@@ -89,7 +106,7 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
         return allMatches(Auto.class, new Filter<Auto>() {
             @Override
             public boolean accept(final Auto t) {            	          	
-                return t.getActivo() && t.getEstado().equals(Estado.LIBRE);            	          	
+            	return t.getActivo();         	          	
             }
         });
     }
@@ -239,7 +256,7 @@ public class AlquilerServicio extends AbstractFactoryAndRepository{
     // }}	
 		
 	// {{ Helpers
-	protected boolean ownedByCurrentUser(final Alquiler t) {
+	protected boolean ownedByCurrentgUser(final Alquiler t) {
 	    return Objects.equal(t.getOwnedBy(), currentUserName());
 	}
 	protected String currentUserName() {

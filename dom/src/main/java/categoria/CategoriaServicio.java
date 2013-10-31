@@ -96,8 +96,12 @@ public class CategoriaServicio extends AbstractFactoryAndRepository {
 		}
 	  });
 	}
+    public List<Categoria> choices0ListadoAutosPorCategoria(){
+    	List<Categoria> items = listaCategorias();
+    	return items;
+    }    
 	// }} 
-	
+    	
 	// {{ 
 	@Hidden    
 	public List<Categoria> autoComplete(final String cat) {

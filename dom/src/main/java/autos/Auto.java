@@ -34,8 +34,8 @@ import marca.Marca;
 @javax.jdo.annotations.PersistenceCapable(identityType=IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(strategy=javax.jdo.annotations.IdGeneratorStrategy.IDENTITY)
 @javax.jdo.annotations.Queries({
-@javax.jdo.annotations.Query(name="listado_autos", language="JDOQL",value="SELECT FROM dom.autos.Auto WHERE activo== :true "),
-@javax.jdo.annotations.Query(name="findAutos", language="JDOQL",value="SELECT FROM dom.autos.Auto WHERE patente == :patente ")})
+@javax.jdo.annotations.Query(name="listado_autos", language="JDOQL",value="SELECT FROM autos.Auto WHERE activo==true"),
+@javax.jdo.annotations.Query(name="findAutos", language="JDOQL",value="SELECT FROM autos.Auto WHERE patente == :patente ")})
 @javax.jdo.annotations.Version(strategy=VersionStrategy.VERSION_NUMBER, column="VERSION")
 
 @ObjectType("AUTO")
